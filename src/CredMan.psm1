@@ -96,7 +96,7 @@ function Set-GenericCredential {
     The name of the credential to delete.
 
 .EXAMPLE
-    # Delete a specific generic credential from user’s credential set:
+    # Delete a specific generic credential from userâ€™s credential set:
 
     Remove-GenericCredential -Name 'StorageAccount:MyAccount'
 #>
@@ -354,8 +354,11 @@ namespace CredManModule
 }
 "@
 
-$compilerParameters = [System.CodeDom.Compiler.CompilerParameters]::new()
-$compilerParameters.ReferencedAssemblies.Add('System.dll')
-$compilerParameters.CompilerOptions = '/unsafe'
-
-Add-Type -CompilerParameters $compilerParameters -TypeDefinition $source -ErrorAction Stop
+if ($PSVersionTable.PSVersion.Major -le 5) {
+    $compilerParameters = [System.CodeDom.Compiler.CompilerParameters]::new()
+    $compilerParameters.ReferencedAssemblies.Add('System.dll')
+    $compilerParameters.CompilerOptions = '/unsafe'
+    Add-Type -CompilerParameters $compilerParameters -TypeDefinition $source -ErrorAction Stop
+} else {
+    Add-Type -CompilerOptions '/unsafe' -TypeDefinition $source -ErrorAction Stop
+}
